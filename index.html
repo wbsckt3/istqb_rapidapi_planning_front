@@ -1097,9 +1097,9 @@
         return;
       }
 
-	  //  rapid api 5 endpoint: POST User create test automation plan in his company
       try {
         //const response = await fetch(`https://www.refactorii.com/api/tenant/workflow/planeador_de_automatizacion_ISTQB`, {
+		//  rapid api 5 endpoint: POST User create test automation plan in his company
 		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB`, {
           method: 'POST',
          /*headers: {
@@ -1159,12 +1159,12 @@
       });
     }
 
-	// rapid api 6 endpoint: GET User get test automation plans subscribed to his company
     async function sincronizarRutasDesdeBD() { // a localstorage
       try {
         const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
         const userEmail = storedFormData.Email;
         //const response = await fetch(`https://www.refactorii.com/api/tenant/workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById`, {
+		// rapid api 6 endpoint: GET User get test automation plans subscribed to his company
 		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById `, { 
           method: 'GET',
           /*headers: {
