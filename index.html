@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title id="page-title">Editor de Rutas Dinámico</title>
+  <title id="page-title">Editor de Rutas DinÃ¡mico</title>
 
   <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
@@ -16,7 +16,7 @@
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="https://unpkg.com/i18next@23.4.6/i18next.min.js"></script>
 
-  <!-- Custom Styles - VERSIÓN 4 RESTAURADA -->
+  <!-- Custom Styles - VERSIÃ“N 4 RESTAURADA -->
   <style>
   body { margin: 0; font-family: 'Roboto', sans-serif; }
   .wrapper { display: flex; height: 100vh; overflow: hidden; }
@@ -139,7 +139,7 @@
     line-height: 1.4;
   }
 
-  /* Estilos específicos para diferentes tipos de nodos */
+  /* Estilos especÃ­ficos para diferentes tipos de nodos */
   .drawflow .drawflow-node.Welcome .title-box {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
@@ -219,7 +219,7 @@
   }
 
 
-  /* Conexiones y puntos de conexión */
+  /* Conexiones y puntos de conexiÃ³n */
   .drawflow .connection .main-path {
     stroke: #667eea;
     stroke-width: 2px;
@@ -277,11 +277,11 @@
 </head>
 <body>
 
-<!-- Overlay de autenticaci�n -->
+<!-- Overlay de autenticación -->
 <div id="auth-overlay">
   <div class="auth-blur"></div>
   <div class="auth-content">
-    <span class="logo-pi2">π</span>
+    <span class="logo-pi2">Ï€</span>
     <p style="font-weight: bold; font-size: 20px;">Agente planeador de automatizacion de pruebas</p>
     <div class="auth-container">
       <div id="g_id_onload"
@@ -308,13 +308,13 @@
   <div class="wrapper">
     <!-- Palette Column -->
     <div class="col" id="palette-column">
-      <!-- Los nodos se generarán dinámicamente aquí -->
+      <!-- Los nodos se generarÃ¡n dinÃ¡micamente aquÃ­ -->
     </div>
 
     <!-- Canvas Column -->
     <div class="col-right">
       <div id="controls" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-        <span class="logo-pi">π</span>
+        <span class="logo-pi">Ï€</span>
         <h1 style="mmargin: 0; font-size: 17px; color: #0060df;" id="app-title"></h1>
         <button onclick="crearRuta()" id="btn-generar-ruta" style="background: #7452ac; color: #fff; border: none; padding: 11px; border-radius: 7px; font-weight: bold;">
            Generar Ruta
@@ -335,7 +335,7 @@
 
   <script>
     // ========================================
-    // CONFIGURACIÓN DINÁMICA DE LA APLICACIÓN
+    // CONFIGURACIÃ“N DINÃMICA DE LA APLICACIÃ“N
     // ========================================
     
     const APP_CONFIG = {
@@ -581,7 +581,7 @@
     };
 
     // ========================================
-    // INICIALIZACIÓN DEL EDITOR
+    // INICIALIZACIÃ“N DEL EDITOR
     // ========================================
     
     const container = document.getElementById("drawflow");
@@ -597,7 +597,7 @@
     let translations = {};
 
     // ========================================
-    // CONFIGURACIÓN DE INTERNACIONALIZACIÓN
+    // CONFIGURACIÃ“N DE INTERNACIONALIZACIÃ“N
     // ========================================
     
     async function loadTranslations() {
@@ -617,13 +617,13 @@
         });
       } catch (error) {
         console.error('Error loading translations:', error);
-        // Fallback a español si hay error
+        // Fallback a espaÃ±ol si hay error
         translations = {};
       }
     }
 
     // ========================================
-    // FUNCIONES DINÁMICAS DE GENERACIÓN
+    // FUNCIONES DINÃMICAS DE GENERACIÃ“N
     // ========================================
     
     function t(key) {
@@ -759,7 +759,7 @@
     }
 
     // ========================================
-    // FUNCIONES DE DATOS DINÁMICAS
+    // FUNCIONES DE DATOS DINÃMICAS
     // ========================================
     
     function obtenerValoresActuales() {
@@ -795,7 +795,7 @@
         });
       });
 
-      console.log("Valores leídos del DOM:", valores);
+      console.log("Valores leÃ­dos del DOM:", valores);
       return valores;
     }
 
@@ -816,7 +816,7 @@
       // Cargar rutas previas desde localStorage
       let rutasGuardadas = JSON.parse(localStorage.getItem(APP_CONFIG.appInfo.storageKey)) || [];
 
-      // Verificar si ya existe una ruta (lógica de pago)
+      // Verificar si ya existe una ruta (lÃ³gica de pago)
       if (rutasGuardadas.length >= 1) {
         await mostrarModalPago(rutasGuardadas, valores);
         return;
@@ -845,7 +845,7 @@
 
       try { 
         await saveRoutes();
-        // Configurar Socket.IO para escuchar cuando los ejercicios estén listos
+        // Configurar Socket.IO para escuchar cuando los ejercicios estÃ©n listos
         setupSocketListeners(rutaData);
       } catch (error) {
         console.error("Error al guardar rutas:", error);
@@ -933,7 +933,7 @@
         socket = io("https://www.refactorii.com");
 
         socket.on("connect", () => {
-          console.log("🔗 Conectado a Socket.IO");
+          console.log("ðŸ”— Conectado a Socket.IO");
           socket.emit("join", formData.Email);
         });
 
@@ -944,11 +944,11 @@
         });
 
         socket.on("disconnect", () => {
-          console.warn("🔌 Desconectado de Socket.IO");
+          console.warn("ðŸ”Œ Desconectado de Socket.IO");
         });
 
         socket.on("connect_error", (err) => {
-          console.error("❌ Error al conectar a Socket.IO:", err.message);
+          console.error("âŒ Error al conectar a Socket.IO:", err.message);
         });
       }
     }
@@ -964,7 +964,7 @@
       const baseY = 230 + ((rutaData.id - 1) * espacioVertical);
 	  
       const { exercises, ...rutaSinExercises } = rutaData; // descarta la propiedad
-      rutaData = rutaSinExercises; // opcional, si tu lógica usa la misma referencia
+      rutaData = rutaSinExercises; // opcional, si tu lÃ³gica usa la misma referencia
 
       let listaEjerciciosHTML = "<p>No hay ejercicios.</p>";
       const formDataRaw = localStorage.getItem("formData");
@@ -996,11 +996,11 @@
 		  // conviertes markdown a html o lo muestras en un <pre>
 		  listaEjerciciosHTML = `
 			<details style="margin-top:10px;">
-			  <summary>Ver Plan de Automatización</summary>
+			  <summary>Ver Plan de AutomatizaciÃ³n</summary>
 			  <pre style="white-space:pre-wrap; font-size:0.85em;">${ex}</pre>
 			</details>`;
 		} else if (Array.isArray(ex) && ex.length > 0) {
-		  // tu lógica anterior para arrays
+		  // tu lÃ³gica anterior para arrays
 		} else {
 		  console.log('Ruta sin ejercicios');
 		} */
@@ -1015,7 +1015,7 @@
               <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: green; color: #ffffff;border-radius: 5px; padding: 15px;width: 100%; ">Ver Plan de Automatizacion</a>
             </div>`;
        } else if (Array.isArray(ex) && ex.length > 0) {
-         // tu l�gica anterior para arrays
+         // tu lógica anterior para arrays
        } else {
          console.log('Ruta sin ejercicios');
        }
@@ -1025,7 +1025,7 @@
         return;
       }
 
-      // Generar HTML dinámico para el resumen
+      // Generar HTML dinÃ¡mico para el resumen
       const camposResumen = Object.entries(rutaData)
         .filter(([key, value]) => key !== 'id' && key !== 'nombre' && key !== 'timestamp' && value)
         .map(([key, value]) => {
@@ -1085,7 +1085,7 @@
       const nuevaRuta = todasLasRutas.length > 0 ? todasLasRutas[todasLasRutas.length - 1] : todasLasRutas;
 
       if (!nuevaRuta) {
-        console.error("No se encontró nueva ruta para guardar");
+        console.error("No se encontrÃ³ nueva ruta para guardar");
         return;
       }
 
@@ -1114,7 +1114,7 @@
     }
 
     // ========================================
-    // FUNCIONES DE INICIALIZACIÓN
+    // FUNCIONES DE INICIALIZACIÃ“N
     // ========================================
     
     function actualizarNodoUsuarioConDatos() {
@@ -1160,7 +1160,7 @@
         try {
           data = JSON.parse(rawText);
         } catch (parseError) {
-          throw new Error("Respuesta inválida: no es JSON válido.\nContenido recibido: " + rawText);
+          throw new Error("Respuesta invÃ¡lida: no es JSON vÃ¡lido.\nContenido recibido: " + rawText);
         }
 
         if (!response.ok) {
@@ -1169,14 +1169,14 @@
 
         if (data && data.success && Array.isArray(data.automationPaths)) {
           localStorage.setItem(APP_CONFIG.appInfo.storageKey, JSON.stringify(data.automationPaths));
-          console.log("✅ Rutas sincronizadas desde MongoDB:", data.automationPaths	);
+          console.log("âœ… Rutas sincronizadas desde MongoDB:", data.automationPaths	);
         } else {
-          console.warn("⚠️ No se encontraron rutas válidas en la respuesta del backend.");
+          console.warn("âš ï¸ No se encontraron rutas vÃ¡lidas en la respuesta del backend.");
           localStorage.removeItem(APP_CONFIG.appInfo.storageKey);
         }
 
       } catch (error) {
-        console.error("❌ Error en sincronizarRutasDesdeBD:", error.message);
+        console.error("âŒ Error en sincronizarRutasDesdeBD:", error.message);
       }
     }
 
@@ -1198,7 +1198,7 @@
           try {
             await renderizarRutaDesdeData(ruta);
           } catch (e) {
-            console.warn(`⚠️ Falló renderizar la ruta ${ruta.id}:`, e.message);
+            console.warn(`âš ï¸ FallÃ³ renderizar la ruta ${ruta.id}:`, e.message);
           }
         }
 
@@ -1214,7 +1214,7 @@
         const estadoInicial = generateInitialState();
         editor.import(estadoInicial);
       } catch (e) {
-        console.error("❌ Error al importar estadoInicial:", e);
+        console.error("âŒ Error al importar estadoInicial:", e);
       }
 
       const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
@@ -1232,13 +1232,13 @@
       const expiry = parseInt(localStorage.getItem("token_expiry"));
 
       if (!token || !expiry) {
-        alert("Tu Sesión ha expirado, logueate nuevamente");
+        alert("Tu SesiÃ³n ha expirado, logueate nuevamente");
         window.location.href = "https://www.refactorii.com";
         return false;
       }
 
       if (Date.now() > expiry) {
-        alert("Tu sesión ha expirado. Por favor vuelve a iniciar sesión.");
+        alert("Tu sesiÃ³n ha expirado. Por favor vuelve a iniciar sesiÃ³n.");
         localStorage.clear();
         window.location.href = "index.html";
         return false;
@@ -1289,46 +1289,46 @@
     }
 
     function guardarEstado() {
-      // Función para mantener compatibilidad con eventos onchange/oninput
+      // FunciÃ³n para mantener compatibilidad con eventos onchange/oninput
       console.log("Estado guardado");
     }
 
     // ========================================
-    // INICIALIZACIÓN DE LA APLICACIÓN
+    // INICIALIZACIÃ“N DE LA APLICACIÃ“N
     // ========================================
     
      function validarToken() {
   	const token  = localStorage.getItem("refactorii_token");
   	const expiry = parseInt(localStorage.getItem("token_expiry") || "0", 10);
-	// 1. No hay token ? simplemente indicar que NO est� autenticado
+	// 1. No hay token ? simplemente indicar que NO está autenticado
   	if (!token || !expiry) {
     	  return false;
   	}
   	// 2. Token expirado ? limpiar y pedir login de nuevo
   	if (Date.now() > expiry) {
-    	  alert("Tu sesi�n ha expirado. Por favor vuelve a iniciar sesi�n.");
+    	  alert("Tu sesión ha expirado. Por favor vuelve a iniciar sesión.");
     	  localStorage.clear();
     	  return false;
   	}
-	// 3. Token v�lido
+	// 3. Token válido
   	return true;
      }
     document.addEventListener('DOMContentLoaded', async () => {
      const overlay  = document.getElementById('auth-overlay');
-     const loggedIn = validarToken();   // true ? token v�lido; false ? no logueado o expirado
+     const loggedIn = validarToken();   // true ? token válido; false ? no logueado o expirado
 
      if (loggedIn) {
        // Oculta overlay y permite scroll
        overlay.style.display = 'none';
        document.body.classList.remove('auth-lock');
      } else {
-       // Mant�n overlay visible bloqueando clics/scroll
+       // Mantén overlay visible bloqueando clics/scroll
        overlay.style.display = 'flex';
        document.body.classList.add('auth-lock');
      }
 
      /*  ??  Estos pasos SIEMPRE se ejecutan, tanto logueado como no.
-         Eso permite que toda la UI se pinte detr�s del overlay. */
+         Eso permite que toda la UI se pinte detrás del overlay. */
      await loadTranslations();
      generatePalette();
      updateUITexts();
