@@ -48,35 +48,19 @@ QA consultants offering certified test planning services
 
 🧭 Available Endpoints:
 
-Endpoint Description
+1. POST /auth/google-signin ( Authenticate a user via Google )
 
-1. POST /auth/google-signin
+2. POST /companies ( Register a new company and associate it with the user )
 
-Authenticate a user via Google
+3. POST /companies/relate-user ( Relate an authenticated user to a company )
 
-2. POST /companies
+4. GET /companies ( Retrieve companies associated with the user )
 
-Register a new company and associate it with the user
+5. POST /workflow/planeador_de_automatizacion_ISTQB ( Create a test plan following ISTQB structure )
 
-3. POST /companies/relate-user
+6. GET /workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById ( List user's ISTQB-style test plans )
 
-Relate an authenticated user to a company
-
-4. GET /companies
-
-Retrieve companies associated with the user
-
-5. POST /workflow/planeador_de_automatizacion_ISTQB
-
-Create a test plan following ISTQB structure
-
-6. GET /workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById
-
-List user's ISTQB-style test plans  
-
-7. GET /workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath
-
-Retrieve a specific test plan by ID
+7. GET /workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath ( Retrieve a specific test plan by ID )
 
 🛠 Tech & Best Practices:
 
