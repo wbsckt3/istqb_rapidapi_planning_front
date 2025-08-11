@@ -58,9 +58,15 @@ QA consultants offering certified test planning services
 
 5. POST /workflow/planeador_de_automatizacion_ISTQB ( Create a test plan following ISTQB structure )
 
+   <img width="866" height="363" alt="rapid api endpoint 5" src="https://github.com/user-attachments/assets/4e518fe1-19df-4fdc-8dc6-b3532a6d2de9" />
+
 6. GET /workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById ( List user's ISTQB-style test plans )
 
+   <img width="1121" height="282" alt="rapid api endpoint 6" src="https://github.com/user-attachments/assets/9881df5e-b8e1-4b64-9ed9-84c1e7dc8f46" />
+
 7. GET /workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath ( Retrieve a specific test plan by ID )
+
+   <img width="1012" height="326" alt="rapid api endpoint 7" src="https://github.com/user-attachments/assets/a46893c4-211e-4677-aa48-25cd47b7d0c0" />
 
 🛠 Tech & Best Practices:
 
@@ -70,15 +76,7 @@ QA consultants offering certified test planning services
 - Clear separation of concerns between users, companies, and test flows
 - Follows the full test lifecycle as recommended by ISTQB
 
-----------------
-Rapid API Endpoint 5:
-<img width="866" height="363" alt="rapid api endpoint 5" src="https://github.com/user-attachments/assets/4e518fe1-19df-4fdc-8dc6-b3532a6d2de9" />
-----------------
-Rapid API Endpoint 6:
-<img width="1121" height="282" alt="rapid api endpoint 6" src="https://github.com/user-attachments/assets/9881df5e-b8e1-4b64-9ed9-84c1e7dc8f46" />
-----------------
-Rapid API Endpoint 7:
-<img width="1012" height="326" alt="rapid api endpoint 7" src="https://github.com/user-attachments/assets/a46893c4-211e-4677-aa48-25cd47b7d0c0" />
+
 
 
 
