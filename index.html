@@ -956,7 +956,8 @@
     // ========================================
     // FUNCIONES DE RENDERIZADO Y GUARDADO
     // ========================================
-    
+
+	// rapid api 7 endpoint: GET User GET test automation plan by id  
     async function renderizarRutaDesdeData(rutaData) { // a nodo de rutas 
       const espacioHorizontal = 500;
       const espacioVertical = 250;
@@ -1089,6 +1090,7 @@
         return;
       }
 
+	  //  rapid api 5 endpoint: POST User create test automation plan in his company
       try {
         const response = await fetch(`https://www.refactorii.com/api/tenant/workflow/planeador_de_automatizacion_ISTQB`, {
           method: 'POST',
@@ -1143,6 +1145,7 @@
       });
     }
 
+	// rapid ap 6 endpoint: GET User get test automation plans subscribed to his company
     async function sincronizarRutasDesdeBD() { // a localstorage
       try {
         const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
