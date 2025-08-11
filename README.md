@@ -70,7 +70,16 @@ QA consultants offering certified test planning services
 - Clear separation of concerns between users, companies, and test flows
 - Follows the full test lifecycle as recommended by ISTQB
 
+----------------
 Rapid API Endpoint 5:
-<img width="1042" height="348" alt="imagen" src="https://github.com/user-attachments/assets/b9ea2326-75c8-4bb4-b094-351d411ef327" />
+<img width="866" height="363" alt="rapid api endpoint 5" src="https://github.com/user-attachments/assets/4e518fe1-19df-4fdc-8dc6-b3532a6d2de9" />
+
+Rapid API Endpoint 6:
+<img width="1121" height="282" alt="rapid api endpoint 6" src="https://github.com/user-attachments/assets/9881df5e-b8e1-4b64-9ed9-84c1e7dc8f46" />
+
+Rapid API Endpoint 7:
+<img width="1012" height="326" alt="rapid api endpoint 7" src="https://github.com/user-attachments/assets/a46893c4-211e-4677-aa48-25cd47b7d0c0" />
+
+
 
 
