@@ -64,13 +64,13 @@ QA consultants offering certified test planning services
 
 🛠 Tech & Best Practices:
 
-Node.js, Express
+- Node.js, Express 
+- MongoDB (multi-tenant schema)
+- UUIDs for secure and unique identification
+- Clear separation of concerns between users, companies, and test flows
+- Follows the full test lifecycle as recommended by ISTQB
 
-MongoDB (multi-tenant schema)
+Rapid API Endpoint 5:
+<img width="1042" height="348" alt="imagen" src="https://github.com/user-attachments/assets/b9ea2326-75c8-4bb4-b094-351d411ef327" />
 
-UUIDs for secure and unique identification
-
-Clear separation of concerns between users, companies, and test flows
-
-Follows the full test lifecycle as recommended by ISTQB
 
