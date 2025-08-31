@@ -270,6 +270,16 @@
     margin-top: 1rem; /* opcional */
   }
 
+  /* Efecto de sombra azul al hacer clic en cualquier parte del nodo */
+.drawflow .drawflow-node:focus-within {
+    box-shadow: 0 0 15px 3px rgba(0, 123, 255, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Efecto adicional para mejorar la apariencia al hacer hover */
+.drawflow .drawflow-node:hover {
+    box-shadow: 0 0 10px 2px rgba(0, 123, 255, 0.3);
+}
 
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
