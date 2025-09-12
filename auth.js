@@ -40,14 +40,20 @@ async  function handleCredentialResponse(response) {
     };
     
     localStorage.setItem("formData", JSON.stringify(formData));
-    const ok = await getUserByEmail(responsePayload.email);   // ? devuelve true si se guardó el token    
+    const ok = await getUserByEmail(responsePayload.email);   // guarda token si existe
 
+    // Evitar recargar la pÃ¡gina para no perder estado; solo oculta overlay
     if (ok || localStorage.getItem("refactorii_token")) {
       const overlay = document.getElementById("auth-overlay");
       if (overlay) overlay.style.display = "none";
-      google.accounts.id.disableAutoSelect();
-      google.accounts.id.cancel();
-      location.reload();                      
+      try { google.accounts.id.disableAutoSelect(); } catch(e) {}
+      try { google.accounts.id.cancel(); } catch(e) {}
+      // Rehidratar UI sin reload
+      setTimeout(() => {
+        try {
+          actualizarNodoUsuarioConDatos && actualizarNodoUsuarioConDatos();
+        } catch(e) {}
+      }, 50);
     }
 }
 
