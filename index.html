@@ -20,7 +20,7 @@
   <style>
   body { margin: 0; font-family: 'Roboto', sans-serif; background: #1e1e1e; color: #e5e5e5; }
   .wrapper { display: flex; height: 100vh; overflow: hidden; }
-  .col { width: 260px; background: #2b2b2b; border-right: 1px solid #3a3a3a; padding: 10px; box-sizing: border-box; overflow-y: auto; display: block}
+  .col { width: 260px; background: #2b2b2b; border-right: 1px solid #3a3a3a; padding: 10px; box-sizing: border-box; overflow-y: auto; display: none}
   .col-right { flex: 1; position: relative; background: #1e1e1e; }
   .drag-drawflow { display: flex; align-items: center; padding: 8px; margin: 6px 0; background: #fff; border: 1px solid #ccc; border-radius: 5px; cursor: grab; }
   .drag-drawflow i { margin-right: 6px; }
@@ -1425,7 +1425,6 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
      /*  ??  Estos pasos SIEMPRE se ejecutan, tanto logueado como no.
          Eso permite que toda la UI se pinte detrás del overlay. */
      await loadTranslations();
-     generatePalette();
      updateUITexts();
      setTimeout(() => inicializarEditor(), 100);
     });    // Hacer funciones globales para compatibilidad
