@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">Editor de Rutas DinÃ¡mico</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow@0.0.48/dist/drawflow.min.css">
+  <link rel="stylesheet" type="text/css" href="beautiful.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://unpkg.com/i18next@23.4.6/i18next.min.js"></script>
+
+  <!-- Custom Styles - VERSIÃ“N 4 RESTAURADA -->
+  <style>
+  body { 
+    margin: 0; 
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif; 
+    background: #f8fafc;
+    color: #2d3748;
+    line-height: 1.6;
+  }
+  .wrapper { display: flex; height: 100vh; overflow: hidden; }
+  .col { width: 200px; background: #f5f5f5; border-right: 1px solid #ddd; padding: 10px; box-sizing: border-box; overflow-y: auto; display: none}
+  .col-right { flex: 1; position: relative; }
+  .drag-drawflow { 
+    display: flex; 
+    align-items: center; 
+    padding: 12px 16px; 
+    margin: 8px 0; 
+    background: #fff; 
+    border: 2px solid #e1e5e9; 
+    border-radius: 12px; 
+    cursor: grab; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    font-weight: 500;
+    color: #2d3748;
+  }
+  
+  .drag-drawflow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-color: #667eea;
+    background: #f7fafc;
+  }
+  
+  .drag-drawflow:active {
+    cursor: grabbing;
+    transform: translateY(0);
+  }
+  
+  .drag-drawflow i { 
+    margin-right: 10px; 
+    font-size: 16px;
+    color: #667eea;
+    width: 20px;
+    text-align: center;
+  }
+  #controls { 
+    padding: 16px 20px; 
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%) !important; 
+    border-bottom: 1px solid #e2e8f0; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  #drawflow {
+    width: 100%;
+    height: calc(100% - 50px);
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    margin-top: -60px;
+  }
+
+  /* ESTILOS DE NODOS MEJORADOS - VERSION 5 */
+  .drawflow .drawflow-node {
+    background: #fff;
+    border: 2px solid #e1e5e9;
+    border-radius: 16px;
+    padding: 0;
+    width: auto;
+    min-width: 200px;
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .drawflow .drawflow-node::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    border-radius: 16px 16px 0 0;
+  }
+
+ .drawflow .drawflow-node .title-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 16px 16px 0 0;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    letter-spacing: 0.02em;
+  } 
+  
+  .drawflow .drawflow-node .title-box i {
+	margin-right: 12px;
+	display: inline-block;
+	min-width: 18px;
+	font-size: 16px;
+	opacity: 0.9;
+  }
+  
+  .drawflow .drawflow-node .Usuario {
+    width: 220px;
+  }
+
+  .drawflow .drawflow-node .box {
+    padding: 20px;
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+    position: relative;
+  }
+
+  .drawflow .drawflow-node input[type="text"],
+  .drawflow .drawflow-node input[type="datetime-local"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fafbfc;
+    font-family: inherit;
+    color: #2d3748;
+  }
+
+  .drawflow .drawflow-node input[type="text"]:focus,
+  .drawflow .drawflow-node input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: #fff;
+    transform: translateY(-1px);
+  }
+
+  .drawflow .drawflow-node input[type="text"]:hover,
+  .drawflow .drawflow-node input[type="datetime-local"]:hover {
+    border-color: #a0aec0;
+    background: #fff;
+  }
+
+  .drawflow .drawflow-node select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+    background: #fafbfc;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    color: #2d3748;
+    cursor: pointer;
+  }
+
+  .drawflow .drawflow-node select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: #fff;
+    transform: translateY(-1px);
+  }
+
+  .drawflow .drawflow-node select:hover {
+    border-color: #a0aec0;
+    background: #fff;
+  }
+
+  .drawflow .drawflow-node textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fafbfc;
+    color: #2d3748;
+    line-height: 1.5;
+  }
+
+  .drawflow .drawflow-node textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: #fff;
+    transform: translateY(-1px);
+  }
+
+  .drawflow .drawflow-node textarea:hover {
+    border-color: #a0aec0;
+    background: #fff;
+  }
+
+  .drawflow .drawflow-node p {
+    margin: 0 0 12px 0;
+    color: #4a5568;
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* Estilos específicos para diferentes tipos de nodos */
+  .drawflow .drawflow-node.Welcome .title-box {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  
+ .drawflow .drawflow-node:has(textarea) .title-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white;
+}
+  
+  .drawflow .drawflow-node:has(select) .title-box {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+    color: white;
+  }
+
+  .drawflow .drawflow-node.Usuario .title-box {
+    background: linear-gradient(135deg, #38b2ac 0%, #319795 100%) !important;
+    color: white;
+  }
+
+  /* Estilos para nodos de texto */
+  .drawflow .drawflow-node:has(input[type="text"]) .title-box {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: white;
+  }
+
+  /* Estilos para nodos de fecha */
+  .drawflow .drawflow-node:has(input[type="datetime-local"]) .title-box {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+    color: white;
+  }
+
+  /* Loader styles */
+  #ruta-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .loader-container {
+    text-align: center;
+  }
+
+  .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #667eea;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .logo-refactorii {
+    width: 120px;
+    height: 40px;
+    background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAAkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABkAGQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcIC');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .logo-pi {
+    font-size: 33px;
+    color: #f59e0b;
+    font-weight: bold;
+    margin: 0 0.25rem;
+    margin-top: -5px;
+    margin-right: -16px;
+  }
+
+  .logo-pi2 {
+    font-size: 30px;
+    color: #f59e0b;
+    font-weight: bold;
+    margin: 0 0.25rem;
+    margin-top: -5px;
+    margin-right: -16px;
+  }
+
+
+  /* Conexiones y puntos de conexión mejorados */
+  .drawflow .connection .main-path {
+    stroke: #667eea;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
+    transition: all 0.3s ease;
+  }
+
+  .drawflow .connection:hover .main-path {
+    stroke: #5a67d8;
+    stroke-width: 4px;
+    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+  }
+
+  .drawflow .drawflow-node .input,
+  .drawflow .drawflow-node .output {
+    border: 3px solid #667eea;
+    background: #fff;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+  }
+
+  .drawflow .drawflow-node .input:hover,
+  .drawflow .drawflow-node .output:hover {
+    background: #667eea;
+    border-color: #5a67d8;
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+  }
+
+  .drawflow .drawflow-node .input {
+    background: #e2e8f0;
+    border-color: #a0aec0;
+  }
+
+  .drawflow .drawflow-node .output {
+    background: #667eea;
+    border-color: #5a67d8;
+  }
+
+  #auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem; /* opcional */
+  }
+
+/* Efectos mejorados de hover y focus */
+.drawflow .drawflow-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1) !important;
+    border-color: #cbd5e0;
+}
+
+.drawflow .drawflow-node:focus-within {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 8px 25px rgba(0,0,0,0.15) !important;
+    border-color: #667eea;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animación de entrada para nodos nuevos */
+@keyframes nodeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.drawflow .drawflow-node {
+    animation: nodeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto de pulso para nodos activos */
+.drawflow .drawflow-node.active {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+    }
+}
+
+/* Estilos para el botón principal */
+#btn-generar-ruta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+#btn-generar-ruta:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Mejoras de responsividad */
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+    
+    .col {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        display: block;
+    }
+    
+    .drawflow .drawflow-node {
+        min-width: 180px;
+    }
+    
+    .drawflow .drawflow-node .box {
+        padding: 16px;
+    }
+    
+    #controls {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    #btn-generar-ruta {
+        width: 100%;
+        padding: 14px 20px;
+    }
+}
+
+/* Mejoras para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .drawflow .drawflow-node {
+        min-width: 160px;
+    }
+    
+    .drawflow .drawflow-node .title-box {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .drawflow .drawflow-node .box {
+        padding: 12px;
+    }
+}
+
+/* Mejoras de accesibilidad */
+.drawflow .drawflow-node:focus {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+.drawflow .drawflow-node input:focus,
+.drawflow .drawflow-node select:focus,
+.drawflow .drawflow-node textarea:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+}
+
+/* Mejor contraste para texto */
+.drawflow .drawflow-node p {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* Indicadores de estado para nodos */
+.drawflow .drawflow-node.valid {
+    border-color: #48bb78;
+    box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+}
+
+.drawflow .drawflow-node.invalid {
+    border-color: #f56565;
+    box-shadow: 0 0 0 2px rgba(245, 101, 101, 0.2);
+}
+
+.drawflow .drawflow-node.processing {
+    border-color: #ed8936;
+    box-shadow: 0 0 0 2px rgba(237, 137, 54, 0.2);
+}
+
+/* Mejoras para modo de alto contraste */
+@media (prefers-contrast: high) {
+    .drawflow .drawflow-node {
+        border-width: 3px;
+        border-color: #000;
+    }
+    
+    .drawflow .drawflow-node .title-box {
+        background: #000;
+        color: #fff;
+    }
+    
+    .drawflow .drawflow-node input,
+    .drawflow .drawflow-node select,
+    .drawflow .drawflow-node textarea {
+        border-width: 2px;
+        border-color: #000;
+    }
+}
+
+/* Mejoras para usuarios que prefieren movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .drawflow .drawflow-node,
+    .drawflow .drawflow-node *,
+    .drag-drawflow,
+    #btn-generar-ruta {
+        transition: none;
+        animation: none;
+    }
+}
+
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="./auth.js" async defer></script>
+</head>
+<body>
+
+<!-- Overlay de autenticación -->
+<div id="auth-overlay">
+  <div class="auth-blur"></div>
+  <div class="auth-content">
+    <span class="logo-pi2">Refactorii ⚡Testing automatizado y asistido por <strong>IA 🤖 + ISTQB 🏆</span>
+
+<p style="font-weight: bold; font-size: 22px;">
+AOAPS | Agente Orquestador de Automatización de Pruebas de Software
+</p>
+<br>
+<div class="auth-container">
+      <div id="g_id_onload"
+           data-client_id="980822676255-vntch0t28qbesul2bp5oc1galtoi8a97.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-context="use"
+           data-ux_mode="popup"
+           data-auto_select="false"
+           data-itp_support="true">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-shape="rectangular"
+           data-theme="outline"
+           data-text="signin_with"
+           data-size="medium"
+           data-logo_alignment="left">
+      </div>
+</div>
+<br>
+<hr/>
+	  
+<p style="font-weight: bold; font-size: 20px;">
+🧩 Testea la <strong>homogeneidad</strong>, <strong>consistencia</strong> y <strong>conexión</strong> de toda la arquitectura  
+(front 🖥️ + back ⚙️ + infra ☁️ + DB 🗄️)
+</p>
+
+<p style="font-weight: bold; font-size: 20px;">
+🔗 Garantiza con <strong>tests E2E</strong> la sincronía perfecta entre capas  
+(UI 🎨 ↔ API 📡 ↔ DB/Infra 🛠️)  
+👉 ¡Sin caer en el <span style="color:red;">DEVOPS Hell 🔥</span>!
+</p>
+
+<p style="font-weight: bold; font-size: 20px;">
+📬 Genera pruebas directas al back con <strong>Postman/Newman</strong> 📨 o <strong>RestAssured</strong> 🛡️
+</p>
+
+<p style="font-weight: bold; font-size: 20px;">
+Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y la integración de </strong> de microservicios y componentes 
+</p>
+
+    
+  </div>
+</div>
+
+
+  <div class="wrapper">
+    <!-- Palette Column -->
+    <div class="col" id="palette-column">
+      <!-- Los nodos se generarÃ¡n dinÃ¡micamente aquÃ­ -->
+    </div>
+
+    <!-- Canvas Column -->
+    <div class="col-right">
+      <div id="controls" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+        <span class="logo-pi">Ï€</span>
+        <h1 style="mmargin: 0; font-size: 17px; color: #0060df;" id="app-title"></h1>
+        <button onclick="crearRuta()" id="btn-generar-ruta" style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+          color: #fff; 
+          border: none; 
+          padding: 12px 24px; 
+          border-radius: 12px; 
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        ">
+           Generar Plan de Automatización
+        </button>  
+      </div> 
+      <div class="logo-refactorii"></div>
+      <div id="drawflow" class="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+  </div>
+
+  <div id="ruta-loader" style="display: none;">
+    <div class="loader-container">
+      <div class="spinner"></div>
+      <p id="spinner1">Procesando...</p>
+      <p id="spinner2">Por favor espera...</p>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURACIÃ“N DINÃMICA DE LA APLICACIÃ“N
+    // ========================================
+    
+    const APP_CONFIG = {
+      // Informacion basica de la aplicacion
+      appInfo: {
+        name: "test_automation_plans", 
+        title: "Planeador de Automatizacion de Testing ISTQB",
+        storageKey: "planes_automatizacion_testing", 
+        apiEndpoint: "testAutomationPlans", 
+        paymentAmount: "25000",
+        paymentDescription: "Plan adicional de automatizacion de testing"
+      },
+
+      // Definicion de nodos dinamicos para Testing ISTQB
+        nodes: {
+		/*Welcome: {
+          icon: "fas fa-robot",
+          titleKey: "titulo_nodo1",
+          type: "info",
+          hasInputs: true,
+          hasOutputs: true,
+          position: { x: 30, y: 270 },
+          width: "auto"
+        },*/
+		  Usuario: {
+			icon: "fas fa-user",
+			titleKey: "titulo_nodo2",
+			type: "user",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 30, y: 20 },
+			width: "250px"
+		  },
+		  TestId: {
+			icon: "fas fa-hashtag",
+			titleKey: "titulo_nodo3",
+			type: "text",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 340, y: 20 },
+			fieldName: "testId",
+			placeholderKey: "TC_LOGIN_001"
+		  },
+		  TestObjective: {
+			icon: "fas fa-bullseye",
+			titleKey: "titulo_nodo4",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 650, y: 20 },
+			fieldName: "objetivo",
+			placeholderKey: "Verificar que el usuario puede iniciar sesion correctamente..."
+		  },
+		  Preconditions: {
+			icon: "fas fa-list-check",
+			titleKey: "titulo_nodo5",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 960, y: 20 },
+			fieldName: "precondiciones",
+			placeholderKey: "- Usuario registrado en el sistema\n- Base de datos disponible\n- Navegador Chrome actualizado"
+		  },
+		  TestSteps: {
+			icon: "fas fa-stairs",
+			titleKey: "titulo_nodo6",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 1270, y: 20 },
+			fieldName: "pasos",
+			placeholderKey: "1. Navegar a la pagina de login\n2. Ingresar email valido\n3. Ingresar contrasena\n4. Hacer clic en 'Iniciar Sesion'"
+		  },
+		  TestData: {
+			icon: "fas fa-database",
+			titleKey: "titulo_nodo7",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 340, y: 220 },
+			fieldName: "datosPrueba",
+			placeholderKey: "Email: test@example.com\nPassword: Test123!\nUsuario: Juan Perez"
+		  },
+		  ExpectedResult: {
+			icon: "fas fa-check-circle",
+			titleKey: "titulo_nodo8",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 650, y: 220 },
+			fieldName: "resultadoEsperado",
+			placeholderKey: "- Usuario redirigido al dashboard\n- Mensaje 'Bienvenido' visible\n- Menu principal cargado"
+		  },
+		  AcceptanceCriteria: {
+			icon: "fas fa-clipboard-check",
+			titleKey: "titulo_nodo9",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 960, y: 220 },
+			fieldName: "criteriosAceptacion",
+			placeholderKey: "- Tiempo de respuesta < 3 segundos\n- Sin errores en consola\n- Elementos UI cargados correctamente"
+		  },
+		   ArchitectureDescription: {
+			icon: "fas fa-clipboard-check",
+			titleKey: "titulo_nodo10",
+			type: "textarea",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 1270, y: 220 },
+			fieldName: "descripcionArquitectura",
+			placeholderKey: "- Arquitectura basada en microservicios\n- front en vue, back en spring boot y base de datos postgresql"
+		  },
+		  AppType: {
+			icon: "fas fa-desktop",
+			titleKey: "titulo_nodo11",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 340, y: 420 },
+			fieldName: "tipoAplicacion",
+			optionKeys: [
+			  "opcion_app1",
+			  "opcion_app2",
+			  "opcion_app3",
+			  "opcion_app4",
+			  "opcion_app5",
+			  "opcion_app6"
+			]
+		  },
+		  TestType: {
+			icon: "fas fa-vial",
+			titleKey: "titulo_nodo12",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 650, y: 420 },
+			fieldName: "tipoPrueba",
+			optionKeys: [
+			  "opcion_prueba1",
+			  "opcion_prueba2",
+			  "opcion_prueba3",
+			  "opcion_prueba4",
+			  "opcion_prueba5",
+			  "opcion_prueba6",
+			  "opcion_prueba7",
+			  "opcion_prueba8"
+			]
+		  },
+		  AutomationFramework: {
+			icon: "fas fa-cogs",
+			titleKey: "titulo_nodo13",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 960, y: 420 },
+			fieldName: "framework",
+			optionKeys: [
+			  "opcion_framework1",
+			  "opcion_framework2",
+			  "opcion_framework3",
+			  "opcion_framework4",
+			  "opcion_framework5",
+			  "opcion_framework6",
+			  "opcion_framework7",
+			  "opcion_framework8",
+			  "opcion_framework9",
+			  "opcion_framework10"
+			]
+		  },
+		  CiCdPipeline: {
+			icon: "fas fa-code-branch",
+			titleKey: "titulo_nodo14",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 1270, y: 420 },
+			fieldName: "pipeline",
+			optionKeys: [
+			  "opcion_pipeline1",
+			  "opcion_pipeline2",
+			  "opcion_pipeline3",
+			  "opcion_pipeline4",
+			  "opcion_pipeline5",
+			  "opcion_pipeline6",
+			  "opcion_pipeline7",
+			  "opcion_pipeline8"
+			]
+		  },
+		  TestPriority: {
+			icon: "fas fa-exclamation-triangle",
+			titleKey: "titulo_nodo15",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 650, y: 620 },
+			fieldName: "prioridad",
+			optionKeys: [
+			  "opcion_prioridad1",
+			  "opcion_prioridad2",
+			  "opcion_prioridad3",
+			  "opcion_prioridad4"
+			]
+		  },
+		  ExecutionSchedule: {
+			icon: "fas fa-calendar-alt",
+			titleKey: "titulo_nodo16",
+			type: "datetime",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x: 30, y: 420 },
+			fieldName: "fechaEjecucion"
+		  },
+		  TestEnvironment: {
+			icon: "fas fa-server",
+			titleKey: "titulo_nodo17",
+			type: "select",
+			hasInputs: true,
+			hasOutputs: true,
+			position: { x:340 , y: 620 },
+			fieldName: "ambiente",
+			optionKeys: [
+			  "opcion_ambiente1",
+			  "opcion_ambiente2",
+			  "opcion_ambiente3",
+			  "opcion_ambiente4",
+			  "opcion_ambiente5"
+			]
+		  }
+		},
+
+      // Estructura de datos que se guardara
+      dataStructure: {
+        id: null,
+        nombre: null,
+        testId: "",
+        objetivo: "",
+        precondiciones: "",
+        pasos: "",
+        datosPrueba: "",
+        resultadoEsperado: "",
+        criteriosAceptacion: "",
+		descripcionArquitectura:"",
+        tipoAplicacion: "opcion_app1",
+        tipoPrueba: "opcion_prueba1",
+        framework: "opcion_framework1",
+        pipeline: "opcion_pipeline1",
+        prioridad: "opcion_prioridad3",
+        fechaEjecucion: "",
+        ambiente: "opcion_ambiente2",
+        progreso: 0,
+        timestamp: null
+      }
+    };
+
+    // ========================================
+    // INICIALIZACIÃ“N DEL EDITOR
+    // ========================================
+    
+    const container = document.getElementById("drawflow");
+    const editor = new Drawflow(container);
+    editor.reroute = true;
+    editor.editor_mode = "edit"; 
+    editor.start();
+
+    // Variables globales
+    let rutasGeneradas = [];
+    let rutaCounter = 1;
+    let socket;
+    let translations = {};
+
+    // ========================================
+    // CONFIGURACIÃ“N DE INTERNACIONALIZACIÃ“N
+    // ========================================
+    
+    async function loadTranslations() {
+      const lang = navigator.language.startsWith('es') ? 'es' : 'en';
+      
+      try {
+        const response = await fetch(`./translations/${lang}.json`);
+        translations = await response.json();
+        
+        i18next.init({
+          lng: lang,
+          resources: {
+            [lang]: {
+              translation: translations
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error loading translations:', error);
+        // Fallback a espaÃ±ol si hay error
+        translations = {};
+      }
+    }
+
+    // ========================================
+    // FUNCIONES DINÃMICAS DE GENERACIÃ“N
+    // ========================================
+    
+    function t(key) {
+      return i18next.t(key) || translations[key] || key;
+    }
+    
+    function generateNodeHTML(nodeKey, nodeConfig) {
+      switch(nodeConfig.type) {
+        case 'info':
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">
+                <p><strong>Planeador de Pruebas Automatizadas ISTQB</strong></p>
+                <p>${t('contenido_nodo1')}</p>
+                <p>${t('contenido_nodo2')}</p>
+                <p>${t('contenido_nodo3')}</p>
+                <p>${t('contenido_nodo4')}</p>
+                <p>${t('contenido_nodo5')}</p>
+                <p>${t('contenido_nodo6')}</p>
+                <p>${t('contenido_nodo7')}</p>
+                <p><em>Ideal para testers certificados ISTQB</em></p>
+              </div>
+            </div>
+          `;
+          
+        case 'user':
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">Google Sign-In Info</div>
+            </div>
+          `;
+          
+        case 'text':
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">
+                <p style="width:200px; font-size:12px; color: gray; padding: 5px">${t('descripcion1')}</p>
+                <input type="text" placeholder="${nodeConfig.placeholderKey}" name="${nodeConfig.fieldName}"/>
+              </div>
+            </div>
+          `;
+          
+        case 'select':
+          const options = nodeConfig.optionKeys.map(optionKey => 
+            `<option value="${optionKey}">${t(optionKey)}</option>`
+          ).join('');
+          
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">
+                <p style="width:200px; font-size:12px; color: gray; padding: 8px">${t('descripcion3')}</p>
+                <select onchange="guardarEstado()" name="${nodeConfig.fieldName}">
+                  ${options}
+                </select>
+              </div>
+            </div>
+          `;
+          
+        case 'datetime':
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">
+                <input type="datetime-local" oninput="guardarEstado()" name="${nodeConfig.fieldName}"/>
+              </div>
+            </div>
+          `;
+        case 'textarea':
+          return `
+            <div>
+              <div class="title-box"><i class="${nodeConfig.icon}"></i><span style="margin-left: 20px;">${t(nodeConfig.titleKey)}</span></div>
+              <div class="box">
+                <textarea placeholder="${nodeConfig.placeholderKey}" name="${nodeConfig.fieldName}" 
+                          rows="4" style="width: 200px; resize: vertical; font-size: 12px;"></textarea>
+              </div>
+            </div>
+          `;
+          
+        default:
+          return `<div>Tipo de nodo no reconocido</div>`;
+      }
+    }
+
+    function generateInitialState() {
+      const nodes = {};
+      let nodeId = 1;
+      
+      Object.entries(APP_CONFIG.nodes).forEach(([nodeKey, nodeConfig]) => {
+        const html = generateNodeHTML(nodeKey, nodeConfig);
+        
+        nodes[nodeId] = {
+          id: nodeId,
+          name: nodeKey,
+          data: {},
+          class: nodeKey,
+          html: html,
+          typenode: false,
+          inputs: nodeConfig.hasInputs ? { input_1: { connections: [] }} : {},
+          outputs: nodeConfig.hasOutputs ? { output_1: { connections: [] }} : {},
+          pos_x: nodeConfig.position.x,
+          pos_y: nodeConfig.position.y
+        };
+        
+        nodeId++;
+      });
+      
+      return {
+        drawflow: {
+          Home: {
+            data: nodes
+          }
+        }
+      };
+    }
+
+    function generatePalette() {
+      const paletteColumn = document.getElementById('palette-column');
+      
+      Object.entries(APP_CONFIG.nodes).forEach(([nodeKey, nodeConfig]) => {
+        const dragElement = document.createElement('div');
+        dragElement.className = 'drag-drawflow';
+        dragElement.draggable = true;
+        dragElement.setAttribute('ondragstart', 'drag(event)');
+        dragElement.setAttribute('data-node', nodeKey);
+        dragElement.innerHTML = `<i class="${nodeConfig.icon}"></i><span> ${t(nodeConfig.titleKey)}</span>`;
+        
+        paletteColumn.appendChild(dragElement);
+      });
+    }
+
+    // ========================================
+    // FUNCIONES DE DATOS DINÃMICAS
+    // ========================================
+    
+    function obtenerValoresActuales() {
+      let valores = { ...APP_CONFIG.dataStructure };
+      const nodes = document.querySelectorAll('.drawflow-node');
+
+      nodes.forEach(node => {
+        const nodeTitle = node.querySelector('.title-box')?.textContent?.trim();
+
+        Object.entries(APP_CONFIG.nodes).forEach(([nodeKey, nodeConfig]) => {
+          if (nodeTitle.includes(t(nodeConfig.titleKey)) && nodeConfig.fieldName) {
+            let input;
+            
+            switch(nodeConfig.type) {
+              case 'text':
+                input = node.querySelector(`input[name="${nodeConfig.fieldName}"]`);
+                valores[nodeConfig.fieldName] = input ? input.value : '';
+                break;
+              case 'select':
+                input = node.querySelector(`select[name="${nodeConfig.fieldName}"]`);
+                valores[nodeConfig.fieldName] = input ? input.value : nodeConfig.optionKeys[0];
+                break;
+              case 'datetime':
+                input = node.querySelector(`input[name="${nodeConfig.fieldName}"]`);
+                valores[nodeConfig.fieldName] = input ? input.value : '';
+                break;
+              case 'textarea':
+                input = node.querySelector(`textarea[name="${nodeConfig.fieldName}"]`);
+                valores[nodeConfig.fieldName] = input ? input.value : '';
+                break;
+            }
+          }
+        });
+      });
+
+      console.log("Valores leÃ­dos del DOM:", valores);
+      return valores;
+    }
+
+    // ========================================
+    // FUNCIONES PRINCIPALES REFACTORIZADAS
+    // ========================================
+    
+    async function crearRuta() {
+      const valores = obtenerValoresActuales();
+
+      // Validar campo principal (primer campo de texto)
+      const mainField = Object.values(APP_CONFIG.nodes).find(node => node.type === 'text');
+      if (!valores[mainField.fieldName]) {
+        alert(t('mensaje6'));
+        return;
+      }
+
+      // Cargar rutas previas desde localStorage
+      let rutasGuardadas = JSON.parse(localStorage.getItem(APP_CONFIG.appInfo.storageKey)) || [];
+
+      // Verificar si ya existe una ruta (lÃ³gica de pago)
+      if (rutasGuardadas.length >= 1) {
+        await mostrarModalPago(rutasGuardadas, valores);
+        return;
+      }
+
+      // Mostrar loader
+      document.getElementById("ruta-loader").style.display = "flex";
+
+     const nextId = rutasGuardadas.length
+                   ? Math.max(...rutasGuardadas.map(r => r.id || 0)) + 1
+                   : 1;
+
+      const nombreRuta = `Ruta_${nextId}`;   // prefijo fijo + ID
+
+      // Crear nueva ruta
+      const rutaData = {
+        ...APP_CONFIG.dataStructure,  
+		...valores,                   
+		id: nextId,             
+		nombre: nombreRuta,          
+		timestamp: new Date().toISOString()
+      };
+
+      rutasGuardadas.push(rutaData);
+      localStorage.setItem(APP_CONFIG.appInfo.storageKey, JSON.stringify(rutasGuardadas));
+
+      try { 
+        await saveRoutes();
+        // Configurar Socket.IO para escuchar cuando los ejercicios estÃ©n listos
+        setupSocketListeners(rutaData);
+      } catch (error) {
+        console.error("Error al guardar rutas:", error);
+      }
+       
+      renderizarRutaDesdeData(rutaData);
+    }
+
+    async function mostrarModalPago(rutasGuardadas, valores) {
+      const lastRuta = rutasGuardadas[rutasGuardadas.length - 1];
+      const nextPathId = lastRuta ? lastRuta.id + 1 : 1;
+
+      // Crear modal de pago
+      const mensajeDiv = document.createElement("div");
+      mensajeDiv.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); display: flex;
+        align-items: center; justify-content: center; z-index: 9999;
+      `;
+
+      mensajeDiv.innerHTML = `
+        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 400px; text-align: center;">
+          <h3 style="margin-bottom: 16px;">${t('mensaje4')}</h3>
+          <p style="margin-bottom: 20px;">Para crear una adicional valor: $ ${APP_CONFIG.appInfo.paymentAmount}</p>
+          <form id="epayco-form"></form>
+          <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 10px; background-color: #ccc; border: none; padding: 8px 16px; border-radius: 6px;">
+            Cerrar
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(mensajeDiv);
+
+      // Configurar ePayco
+      setupPayment(nextPathId, valores);
+    }
+
+    function setupPayment(nextPathId, valores) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.epayco.co/checkout.js";
+      script.async = true;
+
+      const config = {
+        "data-epayco-key": "22df602dbc00053066ae1a175757d389",
+        "class": "epayco-button",
+        "data-epayco-amount": APP_CONFIG.appInfo.paymentAmount,
+        "data-epayco-tax": "0",
+        "data-epayco-tax-base": APP_CONFIG.appInfo.paymentAmount,
+        "data-epayco-name": APP_CONFIG.appInfo.paymentDescription,
+        "data-epayco-description": APP_CONFIG.appInfo.paymentDescription,
+        "data-epayco-currency": "cop",
+        "data-epayco-country": "co",
+        "data-epayco-test": "false",
+        "data-epayco-external": "true",
+        "data-epayco-extra1": nextPathId,
+        "data-epayco-response": "https://www.refactorii.com/apiePayco/respuesta-epayco.html",
+        "data-epayco-confirmation": "https://www.refactorii.com/epaycoConfirmationCallback",
+        "data-epayco-button": 'https://multimedia.epayco.co/dashboard/btns/btn5.png'
+      };
+
+      Object.entries(config).forEach(([key, value]) => {
+        script.setAttribute(key, value);
+      });
+
+      script.className = "epayco-button";
+      document.getElementById("epayco-form").appendChild(script);
+
+      // Guardar ruta pendiente
+      const rutaPendiente = {
+        ...APP_CONFIG.dataStructure,
+        ...valores,
+        id: nextPathId,
+        nombre: `Ruta_${nextPathId}`,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem("ruta_pendiente_pago", JSON.stringify(rutaPendiente));
+    }
+
+    function setupSocketListeners(rutaData) {
+      if (!socket) {
+        const formDataRaw = localStorage.getItem("formData");
+        if (!formDataRaw) return;
+        const formData = JSON.parse(formDataRaw);
+
+        socket = io("https://www.refactorii.com");
+
+        socket.on("connect", () => {
+          console.log("ðŸ”— Conectado a Socket.IO");
+          socket.emit("join", formData.Email);
+        });
+
+        socket.on("exercises_ready", ({ pathId }) => {
+          document.getElementById("ruta-loader").style.display = "none";
+          alert(t('mensaje5'));
+          location.reload();
+        });
+
+        socket.on("disconnect", () => {
+          console.warn("ðŸ”Œ Desconectado de Socket.IO");
+        });
+
+        socket.on("connect_error", (err) => {
+          console.error("âŒ Error al conectar a Socket.IO:", err.message);
+        });
+      }
+    }
+
+    // ========================================
+    // FUNCIONES DE RENDERIZADO Y GUARDADO
+    // ========================================
+
+    async function renderizarRutaDesdeData(rutaData) { // a nodo de rutas 
+      const espacioHorizontal = 500;
+      const espacioVertical = 250;
+      const baseX = 780;
+      const baseY = 230 + ((rutaData.id - 1) * espacioVertical);
+	  
+      const { exercises, ...rutaSinExercises } = rutaData; // descarta la propiedad
+      rutaData = rutaSinExercises; // opcional, si tu lÃ³gica usa la misma referencia
+
+      let listaEjerciciosHTML = "<p>No hay ejercicios.</p>";
+      const formDataRaw = localStorage.getItem("formData");
+      if (!formDataRaw) return;
+      const formData = JSON.parse(formDataRaw);
+      const userEmail = formData.Email;  console.log(userEmail); console.log(rutaData.id);
+
+      try {
+		// rapid api 7 endpoint: GET User GET test automation plan by id  
+		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath`, {
+          method: "GET",
+          /*headers: {
+			'Content-Type': 'application/json',
+			'x-user-email': userEmail.toLowerCase().trim(),
+			'x-path-id':    String(rutaData.id)
+		  }*/
+		  headers: {
+        	"x-rapidapi-host": "refactorii.p.rapidapi.com",
+        	"x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	'x-user-email': userEmail.toLowerCase().trim(),
+			'x-path-id':    String(rutaData.id)
+      	  }			  
+        });
+
+        if (!response.ok) {
+          console.error(`Error HTTP ${response.status} al obtener ejercicios de la ruta ${rutaData.id}`);
+          return;
+        }
+
+        const data = await response.json(); console.log(data)
+        const token = localStorage.getItem("refactorii_token");
+
+        const ex = data.ruta.exercises;
+
+		/* if (typeof ex === 'string' && ex.trim().length > 0) {
+		  // conviertes markdown a html o lo muestras en un <pre>
+		  listaEjerciciosHTML = `
+			<details style="margin-top:10px;">
+			  <summary>Ver Plan de AutomatizaciÃ³n</summary>
+			  <pre style="white-space:pre-wrap; font-size:0.85em;">${ex}</pre>
+			</details>`;
+		} else if (Array.isArray(ex) && ex.length > 0) {
+		  // tu lÃ³gica anterior para arrays
+		} else {
+		  console.log('Ruta sin ejercicios');
+		} */
+  
+       if (typeof ex === 'string' && ex.trim().length > 0) {
+         // const ejercicioCodificado = encodeURIComponent(ex);
+         // const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?data=${ejercicioCodificado}&token=${encodeURIComponent(token)&email=${encodeURIComponent(userEmail)}`;
+         const rutaId = Array.isArray(data.ruta) ? data.ruta[0]?.id : data.ruta.id;
+         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
+         listaEjerciciosHTML = `
+            <div style="margin-top:30px; width: 100% ">
+              <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: green; color: #ffffff;border-radius: 5px; padding: 15px;width: 100%; ">Ver Plan de Automatizacion</a>
+            </div>`;
+       } else if (Array.isArray(ex) && ex.length > 0) {
+         // tu lógica anterior para arrays
+       } else {
+         console.log('Ruta sin ejercicios');
+       }
+		
+      } catch (err) {
+        console.error("Error al obtener ejercicios:", err);
+        return;
+      }
+
+      // Generar HTML dinÃ¡mico para el resumen
+      const camposResumen = Object.entries(rutaData)
+        .filter(([key, value]) => key !== 'id' && key !== 'nombre' && key !== 'timestamp' && value)
+        .map(([key, value]) => {
+          const fieldConfig = Object.values(APP_CONFIG.nodes).find(node => node.fieldName === key);
+          const label = fieldConfig ? t(fieldConfig.titleKey) : key;
+          const displayValue = value.startsWith && value.startsWith('opcion_') ? t(value) : value;
+          return `<p><strong>${label}:</strong> ${displayValue}</p>`;
+        }).join('');
+
+      const resumenHTML = `
+        <div style="width: 500px">
+          <div class="title-box" style="background: green"><i class="fas fa-map-signs"></i> <span style="margin-left: 20px;"></span>${rutaData.nombre}</span></div>
+          <div class="box">
+            ${camposResumen}
+            ${listaEjerciciosHTML}
+          </div>
+        </div>
+      `;
+
+      const progresoHTML = `
+        <div style="border: 1px solid green">
+          <div class="title-box" style="background: green"><i class="fas fa-tasks"></i> <span style="margin-left: 20px;"> ${t('campo16')} </span></div>
+          <div class="box">
+            <progress value="${rutaData.progreso}" max="100"></progress>
+            <span>${rutaData.progreso}%</span>
+          </div>
+        </div>
+      `;
+
+      const idResumen = editor.addNode(
+        rutaData.nombre, 1, 1, baseX, baseY, rutaData.nombre, {
+          email: rutaData.email,
+          pathId: rutaData.id
+        }, resumenHTML
+      );
+
+      const idProgreso = editor.addNode(
+        `Progreso_${rutaData.id}`, 1, 0, baseX + espacioHorizontal, baseY,
+        `Progreso_${rutaData.id}`, {}, progresoHTML
+      );
+
+      if (idResumen && idProgreso) {
+        editor.addConnection(idResumen, idProgreso, "output_1", "input_1");
+      }
+    }
+
+    async function saveRoutes() {
+      const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+      const userEmail = storedFormData.Email;
+
+      if (!userEmail) {
+        console.error("Email no encontrado en formData");
+        return;
+      }
+
+      const todasLasRutas = JSON.parse(localStorage.getItem(APP_CONFIG.appInfo.storageKey) || "[]");
+      const nuevaRuta = todasLasRutas.length > 0 ? todasLasRutas[todasLasRutas.length - 1] : todasLasRutas;
+
+      if (!nuevaRuta) {
+        console.error("No se encontrÃ³ nueva ruta para guardar");
+        return;
+      }
+
+      try {
+		//  rapid api 5 endpoint: POST User create test automation plan in his company
+		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB`, {
+          method: 'POST',
+         /*headers: {
+			'Content-Type': 'application/json',
+			'x-user-email': userEmail.toLowerCase().trim()
+		  },*/
+		    headers: {
+			  'Content-Type': 'application/json',
+        	  "x-rapidapi-host": "refactorii.p.rapidapi.com",
+        	  "x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	  'x-user-email': userEmail.toLowerCase().trim(),
+      	    },
+			body: JSON.stringify({
+			newPath: nuevaRuta 
+          })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || "Error al guardar rutas");
+        }
+
+        console.log("Ruta guardada en BD:", data.newPath);
+      } catch (error) {
+        console.error("Error en saveRoutes:", error.message);
+      }
+    }
+
+    // ========================================
+    // FUNCIONES DE INICIALIZACIÃ“N
+    // ========================================
+    
+    function actualizarNodoUsuarioConDatos() {
+      const formDataRaw = localStorage.getItem("formData");
+      if (!formDataRaw) return;
+
+      const formData = JSON.parse(formDataRaw);
+      const nodes = document.querySelectorAll('.drawflow-node');
+
+      nodes.forEach(node => {
+        const nodeTitle = node.querySelector('.title-box')?.textContent?.trim();
+
+        if (nodeTitle.includes(t('titulo_nodo2'))) {
+          const nuevoHTML = `
+            <div>
+              <div class="title-box"><i class="fas fa-user"></i><span style="margin-left: 20px;">${t('titulo_nodo2')}</span></div>
+              <div class="box">
+                <img src="${formData.ImageURL}" style="width: 60px; height: 60px; border-radius: 50%;" />
+                <p><strong>${t('campo1')}:</strong> ${formData.FullName}</p>
+                <p><strong>${t('campo2')}:</strong> ${formData.Email}</p>
+              </div>
+            </div>
+          `;
+          node.innerHTML = nuevoHTML;
+        }
+      });
+    }
+
+    async function sincronizarRutasDesdeBD() { // a localstorage
+      try {
+        const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+        const userEmail = storedFormData.Email;
+		// rapid api 6 endpoint: GET User get test automation plans subscribed to his company
+		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById `, { 
+          method: 'GET',
+          /*headers: {
+			'Content-Type': 'application/json',
+			'x-user-email': userEmail.toLowerCase().trim()
+		  }*/
+		  headers: {
+			  'Content-Type': 'application/json',
+        	  "x-rapidapi-host": "refactorii.p.rapidapi.com",
+        	  "x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	  'x-user-email': userEmail.toLowerCase().trim(),
+      	  }
+        });
+
+        const rawText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (parseError) {
+          throw new Error("Respuesta invÃ¡lida: no es JSON vÃ¡lido.\nContenido recibido: " + rawText);
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || "Error al obtener rutas desde la BD");
+        }
+
+        if (data && data.success && Array.isArray(data.automationPaths)) {
+          localStorage.setItem(APP_CONFIG.appInfo.storageKey, JSON.stringify(data.automationPaths));
+          console.log("âœ… Rutas sincronizadas desde MongoDB:", data.automationPaths	);
+        } else {
+          console.warn("âš ï¸ No se encontraron rutas vÃ¡lidas en la respuesta del backend.");
+          localStorage.removeItem(APP_CONFIG.appInfo.storageKey);
+        }
+
+      } catch (error) {
+        console.error("âŒ Error en sincronizarRutasDesdeBD:", error.message);
+      }
+    }
+
+    async function crearNodosDesdeLocalStorage() {
+      const rutasGuardadas = localStorage.getItem(APP_CONFIG.appInfo.storageKey);
+      if (!rutasGuardadas) return;
+
+      try {
+        const rutas = JSON.parse(rutasGuardadas);
+        rutasGeneradas = rutas;
+
+        rutaCounter = rutas.length > 0 
+          ? Math.max(...rutas.map(r => r.id)) + 1 
+          : 1;
+
+        console.log("Cargando rutas desde localStorage:", rutas);
+
+        for (const ruta of rutas) {
+          try {
+            await renderizarRutaDesdeData(ruta);
+          } catch (e) {
+            console.warn(`âš ï¸ FallÃ³ renderizar la ruta ${ruta.id}:`, e.message);
+          }
+        }
+
+      } catch (e) {
+        console.error("Error al parsear rutas del localStorage:", e);
+        rutasGeneradas = [];
+        rutaCounter = 1;
+      }
+    }
+
+    async function inicializarEditor() {
+      try {
+        const estadoInicial = generateInitialState();
+        editor.import(estadoInicial);
+      } catch (e) {
+        console.error("âŒ Error al importar estadoInicial:", e);
+      }
+
+      const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+      const userEmail = storedFormData.Email;
+      await sincronizarRutasDesdeBD(userEmail);
+
+      setTimeout(() => {
+        crearNodosDesdeLocalStorage();
+        actualizarNodoUsuarioConDatos();
+      }, 300);
+    }
+
+    function validarToken() {
+      const token = localStorage.getItem("refactorii_token");
+      const expiry = parseInt(localStorage.getItem("token_expiry"));
+
+      if (!token || !expiry) {
+        alert("Tu SesiÃ³n ha expirado, logueate nuevamente");
+        window.location.href = "https://www.refactorii.com";
+        return false;
+      }
+
+      if (Date.now() > expiry) {
+        alert("Tu sesiÃ³n ha expirado. Por favor vuelve a iniciar sesiÃ³n.");
+        localStorage.clear();
+        window.location.href = "index.html";
+        return false;
+      }
+
+      return true;
+    }
+
+    function updateUITexts() {
+      document.getElementById("page-title").textContent = APP_CONFIG.appInfo.title;
+      document.getElementById("app-title").textContent = "Refactorii | Planeador de Pruebas Automatizadas con IA (Esquema ISTQB)";
+      document.getElementById("btn-generar-ruta").textContent = t('boton1');
+      document.getElementById("spinner1").textContent = t('mensaje1');
+      document.getElementById("spinner2").textContent = t('mensaje2');
+    }
+
+    // ========================================
+    // FUNCIONES DE DRAG & DROP (MANTENER COMPATIBILIDAD)
+    // ========================================
+    
+    function drag(ev) {
+      ev.dataTransfer.setData("node", ev.target.getAttribute('data-node'));
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("node");
+      addNodeToDrawFlow(data, ev.clientX, ev.clientY);
+    }
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function addNodeToDrawFlow(name, pos_x, pos_y) {
+      if (editor.editor_mode === 'fixed') {
+        return false;
+      }
+      
+      pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
+      pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+
+      const nodeConfig = APP_CONFIG.nodes[name];
+      if (nodeConfig) {
+        const html = generateNodeHTML(name, nodeConfig);
+        editor.addNode(name, nodeConfig.hasInputs ? 1 : 0, nodeConfig.hasOutputs ? 1 : 0, pos_x, pos_y, name, {}, html);
+      }
+    }
+
+    function guardarEstado() {
+      // FunciÃ³n para mantener compatibilidad con eventos onchange/oninput
+      console.log("Estado guardado");
+    }
+
+    // ========================================
+    // INICIALIZACIÃ“N DE LA APLICACIÃ“N
+    // ========================================
+    
+     function validarToken() {
+  	const token  = localStorage.getItem("refactorii_token");
+  	const expiry = parseInt(localStorage.getItem("token_expiry") || "0", 10);
+	// 1. No hay token ? simplemente indicar que NO está autenticado
+  	if (!token || !expiry) {
+    	  return false;
+  	}
+  	// 2. Token expirado ? limpiar y pedir login de nuevo
+  	if (Date.now() > expiry) {
+    	  alert("Tu sesión ha expirado. Por favor vuelve a iniciar sesión.");
+    	  localStorage.clear();
+    	  return false;
+  	}
+	// 3. Token válido
+  	return true;
+     }
+    document.addEventListener('DOMContentLoaded', async () => {
+     const overlay  = document.getElementById('auth-overlay');
+     const loggedIn = validarToken();   // true ? token válido; false ? no logueado o expirado
+
+     if (loggedIn) {
+       // Oculta overlay y permite scroll
+       overlay.style.display = 'none';
+       document.body.classList.remove('auth-lock');
+     } else {
+       // Mantén overlay visible bloqueando clics/scroll
+       overlay.style.display = 'flex';
+       document.body.classList.add('auth-lock');
+     }
+
+     /*  ??  Estos pasos SIEMPRE se ejecutan, tanto logueado como no.
+         Eso permite que toda la UI se pinte detrás del overlay. */
+     await loadTranslations();
+     generatePalette();
+     updateUITexts();
+     setTimeout(() => inicializarEditor(), 100);
+    });    // Hacer funciones globales para compatibilidad
+    window.drag = drag;
+    window.drop = drop;
+    window.allowDrop = allowDrop;
+    window.guardarEstado = guardarEstado;
+    window.crearRuta = crearRuta;
+  </script>
+</body>
+</html>
