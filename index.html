@@ -1062,49 +1062,57 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       const userEmail = formData.Email;  console.log(userEmail); console.log(rutaData.id);
 
       try {
-		// rapid api 7 endpoint: GET User GET test automation plan by id  
-		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath`, {
-          method: "GET",
-          /*headers: {
-			'Content-Type': 'application/json',
-			'x-user-email': userEmail.toLowerCase().trim(),
-			'x-path-id':    String(rutaData.id)
-		  }*/
-		  headers: {
-        	"x-rapidapi-host": "refactorii.p.rapidapi.com",
-        	"x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
-        	'x-user-email': userEmail.toLowerCase().trim(),
-			'x-path-id':    String(rutaData.id)
-      	  }			  
-        });
+		// rapid api 7 endpoint: GET User GET test automation plan by id
+		const baseUrl = `https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath`;
+		let data;
+		try {
+		  const response = await fetch(baseUrl, {
+			method: 'GET',
+			headers: {
+			  Accept: 'application/json',
+			  'x-rapidapi-host': 'refactorii.p.rapidapi.com',
+			  'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650',
+			  'x-user-email': userEmail.toLowerCase().trim(),
+			  'x-path-id': String(rutaData.id)
+			}
+		  });
+		  const raw = await response.text();
+		  if (!response.ok) {
+			console.error(`Error HTTP ${response.status} (headers) ruta ${rutaData.id}:`, raw);
+			throw new Error('header_fetch_failed');
+		  }
+		  data = JSON.parse(raw);
+		} catch (e) {
+		  const urlWithQuery = `${baseUrl}?email=${encodeURIComponent(userEmail.toLowerCase().trim())}&pathId=${encodeURIComponent(String(rutaData.id))}`;
+		  const response2 = await fetch(urlWithQuery, {
+			method: 'GET',
+			headers: {
+			  Accept: 'application/json',
+			  'x-rapidapi-host': 'refactorii.p.rapidapi.com',
+			  'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650'
+			}
+		  });
+		  const raw2 = await response2.text();
+		  if (!response2.ok) {
+			console.error(`Error HTTP ${response2.status} (query) ruta ${rutaData.id}:`, raw2);
+			return;
+		  }
+		  try { data = JSON.parse(raw2); } catch(parseErr) {
+			console.error('Respuesta no es JSON válido (query):', raw2);
+			return;
+		  }
+		}
 
-        if (!response.ok) {
-          console.error(`Error HTTP ${response.status} al obtener ejercicios de la ruta ${rutaData.id}`);
-          return;
-        }
-
-        const data = await response.json(); console.log(data)
+		console.log('verifyExercisesInPath data:', data);
         const token = localStorage.getItem("refactorii_token");
 
-        const ex = data.ruta.exercises;
+        const rutaObj = (data && (data.ruta || data.route || data.path || (data.data && (data.data.ruta || data.data.route || data.data.path)))) || null;
+        const ex = rutaObj && (rutaObj.exercises || rutaObj.Exercises) || data.exercises || null;
 
-		/* if (typeof ex === 'string' && ex.trim().length > 0) {
-		  // conviertes markdown a html o lo muestras en un <pre>
-		  listaEjerciciosHTML = `
-			<details style="margin-top:10px;">
-			  <summary>Ver Plan de AutomatizaciÃ³n</summary>
-			  <pre style="white-space:pre-wrap; font-size:0.85em;">${ex}</pre>
-			</details>`;
-		} else if (Array.isArray(ex) && ex.length > 0) {
-		  // tu lÃ³gica anterior para arrays
-		} else {
-		  console.log('Ruta sin ejercicios');
-		} */
-  
        if (typeof ex === 'string' && ex.trim().length > 0) {
          // const ejercicioCodificado = encodeURIComponent(ex);
          // const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?data=${ejercicioCodificado}&token=${encodeURIComponent(token)&email=${encodeURIComponent(userEmail)}`;
-         const rutaId = Array.isArray(data.ruta) ? data.ruta[0]?.id : data.ruta.id;
+         const rutaId = Array.isArray(rutaObj) ? rutaObj[0]?.id : rutaObj?.id;
          const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
          listaEjerciciosHTML = `
             <div style="margin-top:30px; width: 100% ">
