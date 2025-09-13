@@ -1049,81 +1049,93 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
     async function renderizarRutaDesdeData(rutaData) { // a nodo de rutas 
       const espacioHorizontal = 500;
       const espacioVertical = 250;
-      const baseX = 780;
-      const baseY = 230 + ((rutaData.id - 1) * espacioVertical);
+      const safeId = Number.isFinite(Number(rutaData.id)) ? Number(rutaData.id) : 1;
+      const baseX = 80;
+      const baseY = 120 + ((safeId - 1) * espacioVertical);
 	  
       const { exercises, ...rutaSinExercises } = rutaData; // descarta la propiedad
       rutaData = rutaSinExercises; // opcional, si tu lÃ³gica usa la misma referencia
 
       let listaEjerciciosHTML = "<p>No hay ejercicios.</p>";
       const formDataRaw = localStorage.getItem("formData");
-      if (!formDataRaw) return;
-      const formData = JSON.parse(formDataRaw);
-      const userEmail = formData.Email;  console.log(userEmail); console.log(rutaData.id);
+      let userEmail = null;
+      if (formDataRaw) {
+        const formData = JSON.parse(formDataRaw);
+        userEmail = formData.Email;
+      }
+      console.log('Render ruta normalizada:', { id: safeId, nombre: rutaData.nombre });
 
       try {
-		// rapid api 7 endpoint: GET User GET test automation plan by id
-		const baseUrl = `https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath`;
-		let data;
-		try {
-		  const response = await fetch(baseUrl, {
-			method: 'GET',
-			headers: {
-			  Accept: 'application/json',
-			  'x-rapidapi-host': 'refactorii.p.rapidapi.com',
-			  'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650',
-			  'x-user-email': userEmail.toLowerCase().trim(),
-			  'x-path-id': String(rutaData.id)
-			}
-		  });
-		  const raw = await response.text();
-		  if (!response.ok) {
-			console.error(`Error HTTP ${response.status} (headers) ruta ${rutaData.id}:`, raw);
-			throw new Error('header_fetch_failed');
-		  }
-		  data = JSON.parse(raw);
-		} catch (e) {
-		  const urlWithQuery = `${baseUrl}?email=${encodeURIComponent(userEmail.toLowerCase().trim())}&pathId=${encodeURIComponent(String(rutaData.id))}`;
-		  const response2 = await fetch(urlWithQuery, {
-			method: 'GET',
-			headers: {
-			  Accept: 'application/json',
-			  'x-rapidapi-host': 'refactorii.p.rapidapi.com',
-			  'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650'
-			}
-		  });
-		  const raw2 = await response2.text();
-		  if (!response2.ok) {
-			console.error(`Error HTTP ${response2.status} (query) ruta ${rutaData.id}:`, raw2);
-			return;
-		  }
-		  try { data = JSON.parse(raw2); } catch(parseErr) {
-			console.error('Respuesta no es JSON válido (query):', raw2);
-			return;
-		  }
-		}
+        if (userEmail && validarToken()) {
+          // rapid api 7 endpoint: GET User GET test automation plan by id (robusto)
+          const baseUrl = `https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/verifyExercisesInPath`;
+          let data;
+          try {
+            const response = await fetch(baseUrl, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'x-rapidapi-host': 'refactorii.p.rapidapi.com',
+                'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650',
+                'x-user-email': userEmail.toLowerCase().trim(),
+                'x-path-id': String(safeId)
+              }
+            });
+            const raw = await response.text();
+            if (!response.ok) {
+              console.error(`Error HTTP ${response.status} (headers) ruta ${safeId}:`, raw);
+              throw new Error('header_fetch_failed');
+            }
+            data = JSON.parse(raw);
+          } catch (e) {
+            const urlWithQuery = `${baseUrl}?email=${encodeURIComponent(userEmail.toLowerCase().trim())}&pathId=${encodeURIComponent(String(safeId))}`;
+            const response2 = await fetch(urlWithQuery, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'x-rapidapi-host': 'refactorii.p.rapidapi.com',
+                'x-rapidapi-key': '090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650'
+              }
+            });
+            const raw2 = await response2.text();
+            if (!response2.ok) {
+              console.error(`Error HTTP ${response2.status} (query) ruta ${safeId}:`, raw2);
+            } else {
+              try { data = JSON.parse(raw2); } catch (parseErr) { console.error('Respuesta no es JSON válido (query):', raw2); }
+            }
+          }
 
-		console.log('verifyExercisesInPath data:', data);
-        const token = localStorage.getItem("refactorii_token");
+          console.log('verifyExercisesInPath data:', data);
+          const token = localStorage.getItem('refactorii_token');
+          const rutaObj = (data && (data.ruta || data.route || data.path || (data.data && (data.data.ruta || data.data.route || data.data.path)))) || null;
+          const ex = rutaObj && (rutaObj.exercises || rutaObj.Exercises) || data?.exercises || null;
 
-        const rutaObj = (data && (data.ruta || data.route || data.path || (data.data && (data.data.ruta || data.data.route || data.data.path)))) || null;
-        const ex = rutaObj && (rutaObj.exercises || rutaObj.Exercises) || data.exercises || null;
-
-       if (typeof ex === 'string' && ex.trim().length > 0) {
-         // const ejercicioCodificado = encodeURIComponent(ex);
-         // const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?data=${ejercicioCodificado}&token=${encodeURIComponent(token)&email=${encodeURIComponent(userEmail)}`;
-         const rutaId = Array.isArray(rutaObj) ? rutaObj[0]?.id : rutaObj?.id;
-         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
-         listaEjerciciosHTML = `
-            <div style="margin-top:30px; width: 100% ">
-              <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: green; color: #ffffff;border-radius: 5px; padding: 15px;width: 100%; ">Ver Plan de Automatizacion</a>
-            </div>`;
-       } else if (Array.isArray(ex) && ex.length > 0) {
-         // tu lógica anterior para arrays
-       } else {
-         console.log('Ruta sin ejercicios');
-       }
-		
+         /* if (typeof ex === 'string' && ex.trim().length > 0) {
+           // conviertes markdown a html o lo muestras en un <pre>
+           listaEjerciciosHTML = `
+             <details style="margin-top:10px;">
+               <summary>Ver Plan de AutomatizaciÃ³n</summary>
+               <pre style="white-space:pre-wrap; font-size:0.85em;">${ex}</pre>
+             </details>`;
+         } else if (Array.isArray(ex) && ex.length > 0) {
+           // tu lÃ³gica anterior para arrays
+         } else {
+           console.log('Ruta sin ejercicios');
+         } */
+         if (typeof ex === 'string' && ex.trim().length > 0) {
+           // const ejercicioCodificado = encodeURIComponent(ex);
+           // const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?data=${ejercicioCodificado}&token=${encodeURIComponent(token)&email=${encodeURIComponent(userEmail)}`;
+           const rutaId = (rutaObj && (Array.isArray(rutaObj) ? rutaObj[0]?.id : rutaObj?.id)) ?? safeId;
+           const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
+           listaEjerciciosHTML = `
+              <div style="margin-top:30px; width: 100% ">
+                <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: green; color: #ffffff;border-radius: 5px; padding: 15px;width: 100%; ">Ver Plan de Automatizacion</a>
+              </div>`;
+         } else if (Array.isArray(ex) && ex.length > 0) {
+           // tu lógica anterior para arrays
+         } else {
+           console.log('Ruta sin ejercicios');
+         }
       } catch (err) {
         console.error("Error al obtener ejercicios:", err);
         return;
@@ -1162,7 +1174,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       const idResumen = editor.addNode(
         rutaData.nombre, 1, 1, baseX, baseY, rutaData.nombre, {
           email: rutaData.email,
-          pathId: rutaData.id
+          pathId: safeId
         }, resumenHTML
       );
 
@@ -1309,6 +1321,17 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       }
     }
 
+    function normalizeRuta(ruta, fallbackId) {
+      const rawId = ruta?.id ?? ruta?.pathId ?? ruta?.rutaId ?? ruta?._id;
+      let idNum = parseInt(rawId, 10);
+      if (!Number.isFinite(idNum)) idNum = fallbackId || 1;
+      return {
+        ...ruta,
+        id: idNum,
+        nombre: ruta?.nombre || `Ruta_${idNum}`
+      };
+    }
+
     async function crearNodosDesdeLocalStorage() {
       const rutasGuardadas = localStorage.getItem(APP_CONFIG.appInfo.storageKey);
       if (!rutasGuardadas) return;
@@ -1323,11 +1346,14 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 
         console.log("Cargando rutas desde localStorage:", rutas);
 
+        let index = 0;
         for (const ruta of rutas) {
+          const normal = normalizeRuta(ruta, index + 1);
+          index++;
           try {
-            await renderizarRutaDesdeData(ruta);
+            await renderizarRutaDesdeData(normal);
           } catch (e) {
-            console.warn(`âš ï¸ FallÃ³ renderizar la ruta ${ruta.id}:`, e.message);
+            console.warn(`âš ï¸ FallÃ³ renderizar la ruta ${normal.id}:`, e.message);
           }
         }
 
@@ -1349,7 +1375,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
       const userEmail = storedFormData.Email;
       if (validarToken()) {
-        await sincronizarRutasDesdeBD(userEmail);
+        await sincronizarRutasDesdeBD();
       }
 
       setTimeout(() => {
