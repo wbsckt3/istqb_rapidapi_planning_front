@@ -1259,7 +1259,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
         const userEmail = storedFormData.Email;
 		// rapid api 6 endpoint: GET User get test automation plans subscribed to his company
-		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById `, { 
+		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB/getExercisesInTestAutomationPlanById`, { 
           method: 'GET',
           /*headers: {
 			'Content-Type': 'application/json',
@@ -1285,9 +1285,20 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
           throw new Error(data.error || "Error al obtener rutas desde la BD");
         }
 
-        if (data && data.success && Array.isArray(data.automationPaths)) {
-          localStorage.setItem(APP_CONFIG.appInfo.storageKey, JSON.stringify(data.automationPaths));
-          console.log("âœ… Rutas sincronizadas desde MongoDB:", data.automationPaths	);
+        // Soportar diferentes formas de respuesta
+        const paths = Array.isArray(data?.automationPaths)
+          ? data.automationPaths
+          : Array.isArray(data?.rutas)
+          ? data.rutas
+          : Array.isArray(data?.routes)
+          ? data.routes
+          : Array.isArray(data)
+          ? data
+          : [];
+
+        if (paths.length > 0) {
+          localStorage.setItem(APP_CONFIG.appInfo.storageKey, JSON.stringify(paths));
+          console.log("âœ… Rutas sincronizadas desde MongoDB:", paths);
         } else {
           console.warn("âš ï¸ No se encontraron rutas vÃ¡lidas en la respuesta del backend.");
           localStorage.removeItem(APP_CONFIG.appInfo.storageKey);
