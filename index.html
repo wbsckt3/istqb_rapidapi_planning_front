@@ -301,6 +301,36 @@
 .drag-drawflow { background: #333; border: 1px solid #444; color: #ddd; }
 .drag-drawflow:hover { background: #3b3b3b; }
 
+.header-istqb {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, #2f4c6e, #3498db);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-istqb .icon {
+  font-size: 32px;
+  margin-right: 15px;
+}
+
+.header-istqb h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.header-istqb p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="./auth.js" async defer></script>
@@ -312,7 +342,14 @@
 	  <div class="auth-blur"></div>
 	  <div class="auth-content">	
 		<p style="font-weight: bold; font-size: 22px; width: width: 92%;">
-			<img src="header_istqb.png">
+			<div class="header-istqb">
+			  <span class="icon">🧪</span>
+			  <div class="text-content">
+			    <h2>Planificador de Automatización ISTQB</h2>
+			    <p>Generación de planes de prueba automatizados según estándares ISTQB avanzado</p>
+			  </div>
+			</div>
+
 		</p>
 	  <br>
 <div class="auth-container">
