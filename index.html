@@ -1082,7 +1082,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
     // FUNCIONES DE RENDERIZADO Y GUARDADO
     // ========================================
 
-    async function renderizarRutaDesdeData(rutaData) { // a nodo de rutas 
+	  async function renderizarRutaDesdeData(rutaData) { // a nodo de rutas 
       const espacioHorizontal = 500;
       const espacioVertical = 250;
       const baseX = 780;
@@ -1110,7 +1110,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         	"x-rapidapi-host": "refactorii.p.rapidapi.com",
         	"x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
         	'x-user-email': userEmail.toLowerCase().trim(),
-			'x-path-id':    String(rutaData.id)
+			    'x-path-id':    String(rutaData.id)
       	  }			  
         });
 
@@ -1123,28 +1123,26 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         const token = localStorage.getItem("refactorii_token");
 
         const ex = data.ruta.exercises;
-
-		/* if (typeof ex === 'string' && ex.trim().length > 0) {
-		  // conviertes markdown a html o lo muestras en un <pre>
-		  listaEjerciciosHTML = `
-			<details style="margin-top:10px;">
-			  <summary>Ver Plan de AutomatizaciÃ³n</summary>
-			  <pre style="white-space:pre-wrap; font-size:0.85em;">${ex}</pre>
-			</details>`;
-		} else if (Array.isArray(ex) && ex.length > 0) {
-		  // tu lÃ³gica anterior para arrays
-		} else {
-		  console.log('Ruta sin ejercicios');
-		} */
   
        if (typeof ex === 'string' && ex.trim().length > 0) {
          // const ejercicioCodificado = encodeURIComponent(ex);
          // const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?data=${ejercicioCodificado}&token=${encodeURIComponent(token)&email=${encodeURIComponent(userEmail)}`;
          const rutaId = Array.isArray(data.ruta) ? data.ruta[0]?.id : data.ruta.id;
-         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
+         
+         // Obtener información adicional del plan de automatización
+         const tituloPlan = rutaData.testId || 'Plan de Automatización';
+         const objetivoPlan = rutaData.objetivo || 'Sin objetivo definido';
+         const tipoPrueba = rutaData.tipoPrueba || 'No especificado';
+         const framework = rutaData.framework || 'No especificado';
+         
+         // Crear URL con parámetros adicionales
+         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}&titulo=${encodeURIComponent(tituloPlan)}&objetivo=${encodeURIComponent(objetivoPlan)}&tipoPrueba=${encodeURIComponent(tipoPrueba)}&framework=${encodeURIComponent(framework)}`;
+         
          listaEjerciciosHTML = `
             <div style="margin-top:30px; width: 100% ">
-              <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: green; color: #ffffff;border-radius: 5px; padding: 15px;width: 100%; ">Ver Plan de Automatizacion</a>
+              <a href="${url}" target="_blank" style="font-size:1.0em; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border-radius: 8px; padding: 15px; width: 100%; display: block; text-align: center; text-decoration: none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;">
+                🚀 Ver Plan de Automatización Completo
+              </a>
             </div>`;
        } else if (Array.isArray(ex) && ex.length > 0) {
          // tu lógica anterior para arrays
@@ -1203,6 +1201,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         editor.addConnection(idResumen, idProgreso, "output_1", "input_1");
       }
     }
+    
 
     async function saveRoutes() {
       const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
