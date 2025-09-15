@@ -1363,21 +1363,15 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       } catch (e) {
         console.error("âŒ Error al importar estadoInicial:", e);
       }
-
       const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
       const userEmail = storedFormData.Email;
-      const tok = validarToken(); alert(tok)
-      if (tok) {  
-        await sincronizarRutasDesdeBD(userEmail);
-      }
-
+      await sincronizarRutasDesdeBD(userEmail);
       setTimeout(() => {
         crearNodosDesdeLocalStorage();
       }, 300);
 	  setTimeout(() => {
         actualizarNodoUsuarioConDatos();
       }, 300);
-
     }
 
     // (Legacy validarToken removed - unified below)
