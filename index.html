@@ -1136,7 +1136,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
          const framework = rutaData.framework || 'No especificado';
          
          // Crear URL con parámetros adicionales
-         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}&titulo=${encodeURIComponent(tituloPlan)}&objetivo=${encodeURIComponent(objetivoPlan)}&tipoPrueba=${encodeURIComponent(tipoPrueba)}&framework=${encodeURIComponent(framework)}`;
+         const url = `https://wbsckt3.github.io/refactorii_dev_route/test-plan-viewer.html?rutaId=${rutaId}&token=${encodeURIComponent(token)}&email=${encodeURIComponent(userEmail)}`;
          
          listaEjerciciosHTML = `
             <div style="margin-top:30px; width: 100% ">
@@ -1370,8 +1370,11 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 
       setTimeout(() => {
         crearNodosDesdeLocalStorage();
+      }, 300);
+	  setTimeout(() => {
         actualizarNodoUsuarioConDatos();
       }, 300);
+
     }
 
     // (Legacy validarToken removed - unified below)
