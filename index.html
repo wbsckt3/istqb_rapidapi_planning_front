@@ -1167,7 +1167,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
           return `<p><strong>${label}:</strong> ${displayValue}</p>`;
         }).join('');
 
-      const resumenHTML = `
+     /* const resumenHTML = `
         <div style="width: 500px">
           <div class="title-box" style="background: green"><i class="fas fa-map-signs"></i> <span style="margin-left: 20px;"></span>${rutaData.nombre}</span></div>
           <div class="box">
@@ -1175,7 +1175,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
             ${listaEjerciciosHTML}
           </div>
         </div>
-      `;
+      `; */
 
       const progresoHTML = `
         <div style="border: 1px solid green">
@@ -1187,12 +1187,12 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         </div>
       `;
 
-      const idResumen = editor.addNode(
+      /*const idResumen = editor.addNode(
         rutaData.nombre, 1, 1, baseX, baseY, rutaData.nombre, {
           email: rutaData.email,
           pathId: rutaData.id
         }, resumenHTML
-      );
+      ); */
 
       const idProgreso = editor.addNode(
         `Progreso_${rutaData.id}`, 1, 0, baseX + espacioHorizontal, baseY,
