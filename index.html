@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1356,7 +1358,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 
     async function inicializarEditor() {
       try {
-        const estadoInicial = generateInitialState();
+        const estadoInicial = generateInitialState(); console.log('inicializar editor')
         editor.import(estadoInicial);
       } catch (e) {
         console.error("âŒ Error al importar estadoInicial:", e);
