@@ -1366,7 +1366,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 
       const storedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
       const userEmail = storedFormData.Email;
-      if (validarToken()) {  alert('asdasdasd')
+      if (validarToken()) {  console.log('validar token')
         await sincronizarRutasDesdeBD(userEmail);
       }
 
