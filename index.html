@@ -448,7 +448,8 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
         storageKey: "planes_automatizacion_testing", 
         apiEndpoint: "testAutomationPlans", 
         paymentAmount: "25000",
-        paymentDescription: "Plan adicional de automatizacion de testing"
+        paymentDescription: "Plan adicional de automatizacion de testing",
+		xRapidapiKey: "cf7823192bmsh043d2be4955299ap1b27d7jsnceea5e07119c"
       },
 
       // Definicion de nodos dinamicos para Testing ISTQB
@@ -1110,9 +1111,9 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 		  }*/
 		  headers: {
         	"x-rapidapi-host": "refactorii.p.rapidapi.com",
-        	"x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	"x-rapidapi-key": APP_CONFIG.appInfo.xRapidapiKey,
         	'x-user-email': userEmail.toLowerCase().trim(),
-			    'x-path-id':    String(rutaData.id)
+			'x-path-id':    String(rutaData.id)
       	  }			  
         });
 
@@ -1222,7 +1223,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
       }
 
       try {
-		//  rapid api 5 endpoint: POST User create test automation plan in his company
+		//   api 5 endpoint: POST User create test automation plan in his company
 		const response = await fetch(`https://refactorii.p.rapidapi.com/workflow/planeador_de_automatizacion_ISTQB`, {
           method: 'POST',
          /*headers: {
@@ -1232,7 +1233,7 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 		    headers: {
 			  'Content-Type': 'application/json',
         	  "x-rapidapi-host": "refactorii.p.rapidapi.com",
-        	  "x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	  "x-rapidapi-key": APP_CONFIG.appInfo.xRapidapiKey,
         	  'x-user-email': userEmail.toLowerCase().trim(),
       	    },
 			body: JSON.stringify({
@@ -1296,7 +1297,8 @@ Evalúa sin fricción 🎯 la <strong>unicidad</strong>, el <strong>flujo 🧪 y
 		  headers: {
 			  'Content-Type': 'application/json',
         	  "x-rapidapi-host": "refactorii.p.rapidapi.com",
-        	  "x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+        	  // "x-rapidapi-key": "090bfa2f57msh983fb82a969d110p1c7c77jsn1188ededa650",
+			  "x-rapidapi-key": APP_CONFIG.appInfo.xRapidapiKey
         	  'x-user-email': userEmail.toLowerCase().trim(),
       	  }
         });
